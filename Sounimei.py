@@ -51,7 +51,7 @@ class Sounimei(object):
         # key = input('请输入搜索关键字\n')
         key_input = self.driver.find_element_by_class_name('van-field__control')
         key_input.clear()
-        key_input.send_keys('五月天')
+        key_input.send_keys('Justin Bieber')
         search_btn.click()
         time.sleep(5)
         self.show_more()
@@ -71,15 +71,18 @@ class Sounimei(object):
                         result.append(url)
                         print(url)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
-                        try:
-                            close_btn.click()
-                            time.sleep(2)
-                        except:
-                            print('关闭页面失败')
+                        close_btn.click()
+                        time.sleep(2)
                     except:
                         print('获取信息失败')
+                        close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
+                        close_btn.click()
+                        time.sleep(2)
                 except:
                     print('FLAC点击失败')
+                    close_btn = self.driver.find_element_by_css_selector('i.van-icon-cross')
+                    close_btn.click()
+                    time.sleep(2)
             except:
                 print('歌曲点击失败')
 
