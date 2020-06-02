@@ -35,7 +35,9 @@ class Sounimei(object):
         time.sleep(self.SLEEP_TIME)
         button.click()
         time.sleep(self.SLEEP_TIME)
-        self.download()
+
+    def get_Code(self, url):
+        return '8943'
 
     def download(self):
         search_btn = self.driver.find_element_by_tag_name('button')
@@ -58,4 +60,5 @@ class Sounimei(object):
 
     def run(self):
         self.login()
+        self.download()
 
