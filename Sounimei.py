@@ -13,6 +13,7 @@ class Sounimei(object):
         self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
+        options.add_argument('--ignore-certificate-errors')
 
         self.driver = webdriver.Chrome(chrome_options=options)
 
@@ -29,11 +30,12 @@ class Sounimei(object):
         time.sleep(self.SLEEP_TIME)
         self.driver.implicitly_wait(self.WAIT_TIME)
         img_url = self.driver.find_element_by_tag_name('img').get_attribute('src')
+        print(img_url)
         input = self.driver.find_element_by_css_selector('input.van-field__control')
         s_button = self.driver.find_element_by_tag_name('button')
         time.sleep(self.SLEEP_TIME)
         # 可以利用二维码工具自动登陆
-        key =  self.get_Code(img_url)
+        key = self.get_Code(img_url)
         input.send_keys(key)
         time.sleep(self.SLEEP_TIME)
         s_button.click()
@@ -45,15 +47,21 @@ class Sounimei(object):
         response = requests.get(url)
         # 获取的文本实际上是图片的二进制文本
         img = response.content
-        # 将他拷贝到本地文件 w 写  b 二进制  wb代表写入二进制文本
-        with open('./img/a.jpg', 'wb') as f:
-            f.write(img)
-        # key = input('请输入扫码后结果:\n')
-        reader = zxing.BarCodeReader()
-        barcode = reader.decode("./img/a.jpg")
-        code = barcode.parsed
-        print('code=' + code)
-        return code[-4:]
+        try:
+            # 将他拷贝到本地文件 w 写  b 二进制  wb代表写入二进制文本
+            with open('./a.jpg', 'wb') as f:
+                f.write(img)
+            reader = zxing.BarCodeReader()
+            barcode = reader.decode("./a.jpg")
+            code = barcode.parsed
+            print('code=' + code)
+            return code[-4:]
+
+        except Exception as e:
+            # 若没有java环境，使用手动模式
+            print(e)
+            code = input('请输入扫描后验证码')
+            return code
 
     # 音乐下载
     def download(self):
