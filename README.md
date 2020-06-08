@@ -7,6 +7,7 @@
 
 ## How to use
 - Environment: Python 3.8
+- Need [JAVA](https://www.java.com/zh_CN/download/mac_download.jsp)
 - Run()
 
 ## Disclaimer
