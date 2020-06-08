@@ -2,14 +2,14 @@ import requests
 import zxing
 from selenium import webdriver
 import time
+import csv
 
 
 class Sounimei(object):
     def __init__(self):
         # 配置Chrome
         options = webdriver.ChromeOptions()
-        # profile.default_content_settings.popups：设置为 0 禁止弹出窗口
-        # download.default_directory: 设置下载路径
+
         self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
@@ -22,6 +22,15 @@ class Sounimei(object):
 
         # 隐性等待时间
         self.WAIT_TIME = 1
+
+        # 下载的最大数量
+        self.MAX_SONG_QUANTITY = 50
+
+        # 设置CSV文件
+        self.CSV_FILE_NAME = 'Results.csv'
+
+        # 存储CSV数据
+        self.csv_data = []
 
     # 进行解锁
     def unlock(self):
@@ -47,6 +56,7 @@ class Sounimei(object):
         response = requests.get(url)
         # 获取的文本实际上是图片的二进制文本
         img = response.content
+
         try:
             # 将他拷贝到本地文件 w 写  b 二进制  wb代表写入二进制文本
             with open('./a.jpg', 'wb') as f:
@@ -60,16 +70,16 @@ class Sounimei(object):
         except Exception as e:
             # 若没有java环境，使用手动模式
             print(e)
-            code = input('请输入扫描后验证码')
+            code = input('请输入扫描后验证码\n')
             return code
 
     # 音乐下载
     def download(self):
-        result = []
         time.sleep(5)
         search_btn = self.driver.find_element_by_tag_name('button')
         # key = input('请输入搜索关键字\n')
         key_input = self.driver.find_element_by_class_name('van-field__control')
+
         key_input.clear()
         key_input.send_keys('Justin Bieber')
         search_btn.click()
@@ -79,6 +89,10 @@ class Sounimei(object):
         list = self.driver.find_elements_by_css_selector('.song-item-cell span.item-title')
         for index, song in enumerate(list):
             try:
+                row = []  #存储单条结果
+                title = self.driver.find_element_by_css_selector('span.item-title').text
+                album = self.driver.find_element_by_css_selector('span.item-album').text
+                singer = self.driver.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
                 song.click()
                 time.sleep(3)
                 try:
@@ -88,33 +102,53 @@ class Sounimei(object):
                     time.sleep(3)
                     try:
                         url = self.driver.find_element_by_tag_name('a').get_attribute('href')
-                        result.append(url)
-                        print(url)
+                        row = [title, album, singer, url]
+                        print(row)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
                         time.sleep(2)
-                    except:
-                        print('获取信息失败')
+
+                    except Exception as e:
+                        print(e)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
+                        url = 'nil'
+                        row = [title, album, singer, url]
+                        print(row)
                         close_btn.click()
                         time.sleep(2)
-                except:
-                    print('FLAC点击失败')
+
+                    self.csv_data.append(row)
+                    self.write_to_csv()
+
+                except Exception as e:
+                    print(e)
                     close_btn = self.driver.find_element_by_css_selector('i.van-icon-cross')
                     close_btn.click()
                     time.sleep(2)
-            except:
-                print('歌曲点击失败')
 
-        print(result)
+            except Exception as e:
+                print(e)
 
     def run(self):
         self.unlock()
         self.download()
+        self.write_to_csv()
 
+    # 手动加载歌曲
     def show_more(self):
         try:
-            print('请在60s内刷新页面')
-            time.sleep(60)
+            print('请在5s内刷新页面')
+            time.sleep(5)
+
         except:
             print('加载失败')
+
+    def write_to_csv(self):
+        with open(self.CSV_FILE_NAME, 'w') as csvfile:
+            spam_writer = csv.writer(csvfile, dialect='excel')
+            str.encode("utf-8")
+            spam_title = ['歌曲名', '专辑', '歌手', '下载地址']
+            spam_writer.writerow(spam_title)
+            print(self.csv_data)
+            for item in self.csv_data:
+                spam_writer.writerow(item)
