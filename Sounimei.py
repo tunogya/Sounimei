@@ -1,6 +1,8 @@
+import requests
+import zxing
 from selenium import webdriver
 import time
-from selenium.webdriver.common.keys import Keys
+
 
 class Sounimei(object):
     def __init__(self):
@@ -39,9 +41,19 @@ class Sounimei(object):
 
     # 解析二维码
     def get_Code(self, url):
+        # 定义下载函数
+        response = requests.get(url)
+        # 获取的文本实际上是图片的二进制文本
+        img = response.content
+        # 将他拷贝到本地文件 w 写  b 二进制  wb代表写入二进制文本
+        with open('./img/a.jpg', 'wb') as f:
+            f.write(img)
         # key = input('请输入扫码后结果:\n')
-        key = '8943'
-        return key
+        reader = zxing.BarCodeReader()
+        barcode = reader.decode("./img/a.jpg")
+        code = barcode.parsed
+        print('code=' + code)
+        return code[-4:]
 
     # 音乐下载
     def download(self):
@@ -91,7 +103,6 @@ class Sounimei(object):
     def run(self):
         self.unlock()
         self.download()
-
 
     def show_more(self):
         try:
