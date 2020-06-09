@@ -77,11 +77,11 @@ class Sounimei(object):
     def download(self):
         time.sleep(5)
         search_btn = self.driver.find_element_by_tag_name('button')
-        # key = input('请输入搜索关键字\n')
+        key = input('请输入搜索关键字\n')
         key_input = self.driver.find_element_by_class_name('van-field__control')
 
         key_input.clear()
-        key_input.send_keys('Justin Bieber')
+        key_input.send_keys(key)
         search_btn.click()
         time.sleep(5)
         self.show_more()
