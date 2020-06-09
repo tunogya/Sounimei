@@ -86,13 +86,12 @@ class Sounimei(object):
         time.sleep(5)
         self.show_more()
 
-        list = self.driver.find_elements_by_css_selector('.song-item-cell span.item-title')
+        list = self.driver.find_elements_by_css_selector('.song-item-cell')
         for index, song in enumerate(list):
             try:
-                row = []  #存储单条结果
-                title = self.driver.find_element_by_css_selector('span.item-title').text
-                album = self.driver.find_element_by_css_selector('span.item-album').text
-                singer = self.driver.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
+                title = song.find_element_by_css_selector('span.item-title').text
+                album = song.find_element_by_css_selector('span.item-album').text
+                singer = song.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
                 song.click()
                 time.sleep(3)
                 try:
@@ -108,17 +107,14 @@ class Sounimei(object):
                         close_btn.click()
                         time.sleep(2)
 
+                        self.csv_data.append(row)
+                        self.write_to_csv()
+
                     except Exception as e:
                         print(e)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
-                        url = 'nil'
-                        row = [title, album, singer, url]
-                        print(row)
                         close_btn.click()
                         time.sleep(2)
-
-                    self.csv_data.append(row)
-                    self.write_to_csv()
 
                 except Exception as e:
                     print(e)
