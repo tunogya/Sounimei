@@ -1,5 +1,3 @@
-import string
-
 import requests
 import zxing
 from selenium import webdriver
@@ -7,6 +5,7 @@ import time
 import os
 import re
 import connectDB
+
 
 class Sounimei(object):
     def __init__(self):
@@ -23,6 +22,10 @@ class Sounimei(object):
         self.SLEEP_TIME = 1
         # 隐性等待时间
         self.WAIT_TIME = 1
+
+        # table_name = input("请输入表格名称")
+        table_name = 'qq_music'
+        connectDB.my_create_table(table_name)
 
     # 进行解锁
     def unlock(self):
