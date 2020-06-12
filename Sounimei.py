@@ -1,3 +1,5 @@
+import string
+
 import requests
 import zxing
 from selenium import webdriver
@@ -12,6 +14,8 @@ class Sounimei(object):
         self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
+        options.add_argument('--headless')
+        options.add_argument('--disable-gpu')
         options.add_argument('--ignore-certificate-errors')
         self.driver = webdriver.Chrome(chrome_options=options)
         # 定义睡眠时间
@@ -32,13 +36,12 @@ class Sounimei(object):
         time.sleep(self.SLEEP_TIME)
         self.driver.implicitly_wait(self.WAIT_TIME)
         img_url = self.driver.find_element_by_tag_name('img').get_attribute('src')
-        print(img_url)
         input = self.driver.find_element_by_css_selector('input.van-field__control')
         s_button = self.driver.find_element_by_tag_name('button')
         time.sleep(self.SLEEP_TIME)
         # 可以利用二维码工具自动登陆
-        # key = self.get_Code(img_url)
-        key = "8943"
+        key = self.get_Code(img_url)
+        # key = "8943"
         input.send_keys(key)
         time.sleep(self.SLEEP_TIME)
         s_button.click()
@@ -55,9 +58,9 @@ class Sounimei(object):
             with open(self.PATH + '/a.jpg', 'wb') as f:
                 f.write(img)
             reader = zxing.BarCodeReader()
-            barcode = reader.decode("./a.jpg")
+            barcode = reader.decode(self.PATH + '/a.jpg')
             code = barcode.parsed
-            print('code=' + code)
+            print('破解验证成功')
             return code[-4:]
         except Exception as e:
             # 若没有java环境，使用手动模式
@@ -68,7 +71,6 @@ class Sounimei(object):
     # 下载文件
     def download(self, url):
         file_name = url[32:55]   #获取文件名
-        print(file_name)
         if not os.path.exists(self.PATH + '/' + file_name):
             r = requests.get(url)
             with open(self.PATH + '/' + file_name, "wb") as f:
@@ -87,7 +89,8 @@ class Sounimei(object):
         key_input.send_keys(key)
         search_btn.click()
         time.sleep(5)
-        self.show_more(10)
+        count = input('请输入下滑次数\n')
+        self.show_more(int(count))
 
         list = self.driver.find_elements_by_css_selector('.song-item-cell')
         for index, song in enumerate(list):
@@ -126,13 +129,14 @@ class Sounimei(object):
                 print(e)
 
     # 手动加载歌曲
-    def show_more(self, n):
+    def show_more(self, count):
         # 滑动到最底部
-        for i in range(1, n):
+        print('下拉页面中')
+        for i in range(1, count):
             self.driver.execute_script('window.scrollBy(0, 1000)')
-            time.sleep(1)
-            print('下拉页面中')
+            time.sleep(2)
         # 滑动到最顶部
+        print('开始下载')
         self.driver.execute_script('window.scrollTo(0,0)')
         time.sleep(3)
 
