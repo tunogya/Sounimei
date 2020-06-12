@@ -6,6 +6,7 @@ from selenium import webdriver
 import time
 import csv
 import os
+import re
 
 class Sounimei(object):
     def __init__(self):
@@ -70,7 +71,9 @@ class Sounimei(object):
 
     # 下载文件
     def download(self, url):
-        file_name = url[32:55]   #获取文件名
+        # file_name = url[32:55]   #获取文件名
+        pattern = re.compile(r"(F.+(?=\?guid))")
+        file_name = re.findall(pattern, url)[0]
         if not os.path.exists(self.PATH + '/' + file_name):
             r = requests.get(url)
             with open(self.PATH + '/' + file_name, "wb") as f:
