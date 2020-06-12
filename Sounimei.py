@@ -138,7 +138,7 @@ class Sounimei(object):
 
     # 写入到csv
     def write_to_csv(self):
-        with open(self.CSV_FILE_NAME, 'w') as csvfile:
+        with open(self.PATH + '/' + self.CSV_FILE_NAME, 'w') as csvfile:
             spam_writer = csv.writer(csvfile, dialect='excel')
             str.encode("utf-8")
             spam_title = ['歌曲名', '专辑', '歌手', '下载地址']
