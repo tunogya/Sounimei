@@ -14,24 +14,6 @@ cursor.execute("SET CHARACTER_SET_CLIENT = utf8")
 cursor.execute("SET CHARACTER_SET_RESULTS = utf8")
 
 
-def my_query_exist(file_id):
-    try:
-        sql = '''
-            SELECT *
-            FROM `qq_music`
-            WHERE `file_id` = "''' + file_id + '''" 
-        '''
-        cursor.execute(sql)
-        results = cursor.fetchall()
-
-        if len(results) == 0:
-            return 0
-        else:
-            return 1
-    except Exception as e:
-        print(e)
-
-
 def my_insert_result(result):
     try:
         title = result['title']
