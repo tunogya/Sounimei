@@ -4,8 +4,8 @@ import pymysql
 host = input("请输入数据库地址\n")
 user = input("请输入数据库用户名\n")
 password = input("请输入数据库密码\n")
-table = "music"
-db = pymysql.connect(host, user, password, table)
+schema = "music"
+db = pymysql.connect(host, user, password, schema)
 
 # 使用 cursor() 方法创建一个游标对象 cursor
 cursor = db.cursor()
@@ -14,6 +14,28 @@ cursor = db.cursor()
 cursor.execute("SET NAMES utf8")
 cursor.execute("SET CHARACTER_SET_CLIENT = utf8")
 cursor.execute("SET CHARACTER_SET_RESULTS = utf8")
+
+def my_create_table():
+    try:
+        sql = '''
+        CREATE TABLE `qq_music`  (
+      `id` int(11) NOT NULL,
+      `file_name` varchar(24) NOT NULL,
+      `title` varchar(255) NOT NULL,
+      `singer` varchar(255) NOT NULL,
+      `album` varchar(255) NOT NULL,
+      `url` varchar(255) NOT NULL,
+      PRIMARY KEY (`id`),
+      INDEX `index`(`title`, `singer`, `album`) USING HASH,
+      UNIQUE INDEX `uniqu`(`file_name`) USING HASH
+    )
+        '''
+        cursor.execute(sql)
+        print('初始化表成功')
+    except Exception as e:
+        print(e)
+
+
 
 
 def my_insert_result(result):
