@@ -4,9 +4,9 @@ import requests
 import zxing
 from selenium import webdriver
 import time
-import csv
 import os
 import re
+import connectDB
 
 class Sounimei(object):
     def __init__(self):
@@ -23,12 +23,6 @@ class Sounimei(object):
         self.SLEEP_TIME = 1
         # 隐性等待时间
         self.WAIT_TIME = 1
-        # 下载的最大数量
-        self.MAX_SONG_QUANTITY = 50
-        # 设置CSV文件
-        self.CSV_FILE_NAME = 'Results.csv'
-        # 存储CSV数据
-        self.csv_data = []
 
     # 进行解锁
     def unlock(self):
@@ -70,10 +64,7 @@ class Sounimei(object):
             return code
 
     # 下载文件
-    def download(self, url):
-        # file_name = url[32:55]   #获取文件名
-        pattern = re.compile(r"(F.+(?=\?guid))")
-        file_name = re.findall(pattern, url)[0]
+    def download(self, url, file_name):
         if not os.path.exists(self.PATH + '/' + file_name):
             r = requests.get(url)
             with open(self.PATH + '/' + file_name, "wb") as f:
@@ -98,9 +89,10 @@ class Sounimei(object):
         list = self.driver.find_elements_by_css_selector('.song-item-cell')
         for index, song in enumerate(list):
             try:
-                title = song.find_element_by_css_selector('span.item-title').text
-                album = song.find_element_by_css_selector('span.item-album').text
-                singer = song.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
+                result = {}
+                result['title'] = song.find_element_by_css_selector('span.item-title').text
+                result['album'] = song.find_element_by_css_selector('span.item-album').text
+                result['singer'] = song.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
                 song.click()
                 time.sleep(3)
                 try:
@@ -109,15 +101,15 @@ class Sounimei(object):
                     flac_btn.click()
                     time.sleep(3)
                     try:
-                        url = self.driver.find_element_by_tag_name('a').get_attribute('href')
-                        self.download(url)
-                        row = [title, album, singer, url]
-                        print(row)
+                        result['url'] = self.driver.find_element_by_tag_name('a').get_attribute('href')
+                        pattern = re.compile(r"(F.+(?=\?guid))")
+                        result['file_id'] = re.findall(pattern, result['url'])[0]
+                        connectDB.my_insert_result(result)
+                        # self.download(result['url'], result['file_id'])   # 下载
+                        # print(result)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
                         time.sleep(2)
-                        self.csv_data.append(row)
-                        self.write_to_csv()
                     except Exception as e:
                         print(e)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
@@ -142,16 +134,6 @@ class Sounimei(object):
         print('开始下载')
         self.driver.execute_script('window.scrollTo(0,0)')
         time.sleep(3)
-
-    # 写入到csv
-    def write_to_csv(self):
-        with open(self.PATH + '/' + self.CSV_FILE_NAME, 'w') as csvfile:
-            spam_writer = csv.writer(csvfile, dialect='excel')
-            str.encode("utf-8")
-            spam_title = ['歌曲名', '专辑', '歌手', '下载地址']
-            spam_writer.writerow(spam_title)
-            for item in self.csv_data:
-                spam_writer.writerow(item)
 
     # 运行函数
     def run(self):
