@@ -37,10 +37,10 @@ def my_insert_result(result):
         title = result['title']
         singer = result['singer']
         album = result['album']
-        file_id = result['file_id']
+        file_name = result['file_name']
         url = result['url']
-        sql = "INSERT INTO `qq_music` (`title`, `singer`, `album`, `file_id`, `url`) VALUE ('" + \
-              title + "','" + singer + "','" + album + "','" + file_id + "','" + url + "');"
+        sql = "INSERT INTO `qq_music` (`title`, `singer`, `album`, `file_name`, `url`) VALUE ('" + \
+              title + "','" + singer + "','" + album + "','" + file_name + "','" + url + "');"
         cursor.execute(sql)
         db.commit()
         print("《" + title + "》写入数据库")

@@ -103,7 +103,7 @@ class Sounimei(object):
                     try:
                         result['url'] = self.driver.find_element_by_tag_name('a').get_attribute('href')
                         pattern = re.compile(r"(F.+(?=\?guid))")
-                        result['file_id'] = re.findall(pattern, result['url'])[0]
+                        result['file_name'] = re.findall(pattern, result['url'])[0]
                         connectDB.my_insert_result(result)
                         # self.download(result['url'], result['file_id'])   # 下载
                         # print(result)
