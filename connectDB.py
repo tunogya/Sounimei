@@ -28,7 +28,7 @@ def my_create_table(table_name):
       `url` varchar(255) NOT NULL,
       PRIMARY KEY (`id`),
       INDEX `index`(`title`, `singer`, `album`) USING HASH,
-      UNIQUE INDEX `uniqu`(`file_name`) USING HASH
+      UNIQUE INDEX `unique`(`file_name`) USING HASH
     )
         '''
         cursor.execute(sql)
