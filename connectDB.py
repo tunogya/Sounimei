@@ -1,9 +1,11 @@
 import pymysql
 
 # 打开数据库连接（ip/用户名/密码/数据库名）
+host = input("请输入数据库地址\n")
 user = input("请输入数据库用户名\n")
 password = input("请输入数据库密码\n")
-db = pymysql.connect("122.152.201.37", user, password, "music")
+table = "music"
+db = pymysql.connect(host, user, password, table)
 
 # 使用 cursor() 方法创建一个游标对象 cursor
 cursor = db.cursor()
