@@ -129,7 +129,7 @@ class Sounimei(object):
     def show_more(self, n):
         # 滑动到最底部
         for i in range(1, n):
-            self.driver.execute_script('window.scrollTo(0,1000)')
+            self.driver.execute_script('window.scrollTo(0,'+ 1000*i +')')
             time.sleep(1)
             print('下拉页面中')
         # 滑动到最顶部
