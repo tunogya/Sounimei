@@ -46,7 +46,7 @@ def my_insert_result(result):
         url = result['url']
         img = result['img'].replace("300x300", "800x800")
         sql = "INSERT INTO `qq_music` (`title`, `singer`, `album`, `file_name`,`img`, `url`) VALUE ('" + \
-              title + "','" + singer + "','" + album + "','" + file_name + "','"+ img +"','" + url + "');"
+              title + "','" + singer + "','" + album + "','" + file_name + "','" + img + "','" + url + "');"
         cursor.execute(sql)
         db.commit()
         print("《" + title + "》Write Successful!")

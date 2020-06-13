@@ -21,7 +21,8 @@ class Sounimei(object):
         options.add_argument('–-disable-extensions')
         # profile.default_content_settings.popups：设置为 0 禁止弹出窗口
         # download.default_directory: 设置下载路径
-        self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
+        self.PATH = input("File download path:")
+        # self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
 
@@ -30,7 +31,7 @@ class Sounimei(object):
         # 定义睡眠时间
         self.SLEEP_TIME = 1
         # 隐性等待时间
-        self.WAIT_TIME = 1
+        self.WAIT_TIME = 5
 
         # table_name = input("请输入表格名称")
         table_name = 'qq_music'
@@ -106,13 +107,15 @@ class Sounimei(object):
                 result['img'] = song.find_element_by_tag_name('img').get_attribute('src')
                 result['singer'] = song.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
                 song.click()
-                time.sleep(3)
+                time.sleep(self.SLEEP_TIME)
                 try:
+                    self.driver.implicitly_wait(self.WAIT_TIME)
                     flac_btn = self.driver.find_element_by_css_selector(
                         'div.song-item-cell-padding:nth-of-type(2) span')
                     flac_btn.click()
-                    time.sleep(3)
+                    time.sleep(self.SLEEP_TIME)
                     try:
+                        self.driver.implicitly_wait(self.WAIT_TIME)
                         result['url'] = self.driver.find_element_by_tag_name('a').get_attribute('href')
                         pattern = re.compile(r"(F.+(?=\?guid))")
                         result['file_name'] = re.findall(pattern, result['url'])[0]
@@ -121,19 +124,22 @@ class Sounimei(object):
                         # self.download(result['url'], result['file_id'])   # 下载文件
                         self.download(result['img'], result['file_name'])
                         # print(result)
+                        self.driver.implicitly_wait(self.WAIT_TIME)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
-                        time.sleep(2)
+                        time.sleep(self.SLEEP_TIME)
                     except Exception as e:
                         print(e)
+                        self.driver.implicitly_wait(self.WAIT_TIME)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
-                        time.sleep(2)
+                        time.sleep(self.SLEEP_TIME)
                 except Exception as e:
                     print(e)
+                    self.driver.implicitly_wait(self.WAIT_TIME)
                     close_btn = self.driver.find_element_by_css_selector('i.van-icon-cross')
                     close_btn.click()
-                    time.sleep(2)
+                    time.sleep(self.SLEEP_TIME)
             except Exception as e:
                 print(e)
 
@@ -143,11 +149,11 @@ class Sounimei(object):
         print('下拉页面中')
         for i in range(1, count):
             self.driver.execute_script('window.scrollBy(0, 1000)')
-            time.sleep(2)
+            time.sleep(self.SLEEP_TIME)
         # 滑动到最顶部
         print('开始下载')
         self.driver.execute_script('window.scrollTo(0,0)')
-        time.sleep(3)
+        time.sleep(self.SLEEP_TIME)
 
     # 运行函数
     def run(self):
