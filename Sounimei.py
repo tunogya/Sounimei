@@ -12,10 +12,10 @@ class Sounimei(object):
         # 配置Chrome
         options = webdriver.ChromeOptions()
         # 设置图片不加载
-        options.add_argument('blink-settings=imagesEnabled=false')
+        # options.add_argument('blink-settings=imagesEnabled=false')
         # 设置无头浏览器模式
         options.add_argument('--headless')
-        options.add_argument('–-disable-gpu')
+        # options.add_argument('–-disable-gpu')
         options.add_argument('–-no-sandbox')
         options.add_argument('–-disable-dev-shm-usage')
         options.add_argument('–-disable-extensions')
@@ -29,7 +29,7 @@ class Sounimei(object):
         # self.driver = webdriver.Chrome('/usr/local/bin/chromedriver', chrome_options=options)
         self.driver = webdriver.Chrome(chrome_options=options)
         # 定义睡眠时间
-        self.SLEEP_TIME = 1
+        self.SLEEP_TIME = 3
         # 隐性等待时间
         self.WAIT_TIME = 5
 
@@ -79,23 +79,26 @@ class Sounimei(object):
 
     # 下载文件
     def download(self, url, file_name):
-        if not os.path.exists(self.PATH + '/' + file_name):
-            r = requests.get(url)
-            with open(self.PATH + '/' + file_name, "wb") as f:
-                f.write(r.content)
-            f.close()
-        else:
-            print(file_name + '已存在')
+        try:
+            if not os.path.exists(self.PATH + '/' + file_name):
+                r = requests.get(url)
+                with open(self.PATH + '/' + file_name, "wb") as f:
+                    f.write(r.content)
+                f.close()
+            else:
+                print(file_name + '已存在')
+        except:
+            print("下载失败")
 
     # 音乐检索key关键词
     def search(self, key, count):
-        time.sleep(5)
+        time.sleep(self.SLEEP_TIME)
         search_btn = self.driver.find_element_by_tag_name('button')
         key_input = self.driver.find_element_by_class_name('van-field__control')
         key_input.clear()
         key_input.send_keys(key)
         search_btn.click()
-        time.sleep(5)
+        time.sleep(self.SLEEP_TIME)
         self.show_more(int(count))
 
         list = self.driver.find_elements_by_css_selector('.song-item-cell')
@@ -104,7 +107,7 @@ class Sounimei(object):
                 result = {}
                 result['title'] = song.find_element_by_css_selector('span.item-title').text
                 result['album'] = song.find_element_by_css_selector('span.item-album').text
-                result['img'] = song.find_element_by_tag_name('img').get_attribute('src')
+                result['img'] = song.find_element_by_tag_name('img').get_attribute('src').replace("300x300", "800x800")
                 result['singer'] = song.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
                 song.click()
                 time.sleep(self.SLEEP_TIME)
@@ -121,21 +124,21 @@ class Sounimei(object):
                         result['file_name'] = re.findall(pattern, result['url'])[0]
                         result['img_name'] = result['title'] + "-" + result['album'] + '.jpg'
                         connectDB.my_insert_result(result)
-                        # self.download(result['url'], result['file_id'])   # 下载文件
-                        self.download(result['img'], result['file_name'])
+                        self.download(result['url'], result['file_name'])   # 下载文件
+                        self.download(result['img'], result['img_name'])
                         # print(result)
                         self.driver.implicitly_wait(self.WAIT_TIME)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
                         time.sleep(self.SLEEP_TIME)
-                    except Exception as e:
-                        print(e)
+                    except :
+                        print("FLAC点击失败")
                         self.driver.implicitly_wait(self.WAIT_TIME)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
                         time.sleep(self.SLEEP_TIME)
-                except Exception as e:
-                    print(e)
+                except:
+                    print("歌曲点击失败")
                     self.driver.implicitly_wait(self.WAIT_TIME)
                     close_btn = self.driver.find_element_by_css_selector('i.van-icon-cross')
                     close_btn.click()

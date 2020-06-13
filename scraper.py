@@ -7,5 +7,5 @@ if __name__ == '__main__':
     # mw.show()
     # sys.exit(app.exec())
     spider = Sounimei()
-    # spider.run()
-    spider.collection()
+    spider.run()
+    # spider.collection()
