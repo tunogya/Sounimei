@@ -160,7 +160,7 @@ class Sounimei(object):
         list = connectDB.my_query_singer(begin, end)
         print(list)
         self.unlock()
-        for singer in enumerate(list):
+        for index, singer in enumerate(list):
             self.search(singer, 100)
 
 
