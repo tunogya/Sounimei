@@ -140,14 +140,14 @@ class Sounimei(object):
     # 运行函数
     def run(self):
         self.unlock()
-        key = input('请输入搜索关键字\n')
-        count = input('请输入下滑次数\n')
+        key = input('Input your fantastic:')
+        count = input('How many times to scroll the window:')
         self.search(key, count)
 
     # 遍历查询所有的歌手
     def collection(self):
-        begin = int(input('请输入开始编号\n')) - 1
-        end = int(input('请输入结束编号\n'))
+        begin = int(input('Begin number:')) - 1
+        end = int(input('End number:'))
         list = connectDB.my_query_singer(begin, end)
         print(list)
         self.unlock()

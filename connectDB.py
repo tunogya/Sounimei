@@ -1,9 +1,9 @@
 import pymysql
 
 # 打开数据库连接（ip/用户名/密码/数据库名）
-host = input("请输入数据库地址\n")
-user = input("请输入数据库用户名\n")
-password = input("请输入数据库密码\n")
+host = input("Database host:")
+user = input("Database username:")
+password = input("Database password")
 schema = "music"
 db = pymysql.connect(host, user, password, schema)
 
@@ -48,10 +48,10 @@ def my_insert_result(result):
               title + "','" + singer + "','" + album + "','" + file_name + "','" + url + "');"
         cursor.execute(sql)
         db.commit()
-        print("《" + title + "》写入数据库")
+        print("《" + title + "》Write Successful!")
     except Exception as e:
         # 如果发生错误则回滚
-        print("《" + title + "》写入数据库失败")
+        print("《" + title + "》Write Fail!")
         print(e)
         db.rollback()
         # db.close()
