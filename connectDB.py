@@ -1,9 +1,9 @@
 import pymysql
 
 # 打开数据库连接（ip/用户名/密码/数据库名）
-host = input("Database host:")
-user = input("Database username:")
-password = input("Database password:")
+host = input("Database host: ")
+user = input("Database username: ")
+password = input("Database password: ")
 schema = "music"
 db = pymysql.connect(host, user, password, schema)
 
@@ -32,9 +32,10 @@ def my_create_table(table_name):
     )
         '''
         cursor.execute(sql)
-        print('初始化表成功')
-    except Exception as e:
-        print(e)
+        print('Initialize table succeeded')
+    except:
+        print("There's already a table")
+        pass
 
 
 def my_insert_result(result):
@@ -49,11 +50,10 @@ def my_insert_result(result):
               title + "','" + singer + "','" + album + "','" + file_name + "','" + img + "','" + url + "');"
         cursor.execute(sql)
         db.commit()
-        print("《" + title + "》Write Successful!")
-    except Exception as e:
+        print("《" + title + "》Write Successful")
+    except:
         # 如果发生错误则回滚
-        print("《" + title + "》Write Fail!")
-        print(e)
+        print("《" + title + "》Write Fail")
         db.rollback()
         # db.close()
 
@@ -67,5 +67,6 @@ def my_query_singer(begin, end):
         for singer in result:
             singers.append(singer[0])
         return singers
-    except Exception as e:
-        print(e)
+    except:
+        print('Failed to retrieve artist')
+        pass

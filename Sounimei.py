@@ -2,9 +2,9 @@ import requests
 import zxing
 from selenium import webdriver
 import time
-import os
 import re
 import connectDB
+from ThreadDownload import *
 
 
 class Sounimei(object):
@@ -21,7 +21,7 @@ class Sounimei(object):
         options.add_argument('–-disable-extensions')
         # profile.default_content_settings.popups：设置为 0 禁止弹出窗口
         # download.default_directory: 设置下载路径
-        self.PATH = input("File download path:")
+        self.PATH = input("File download path: ")
         # self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
@@ -34,9 +34,11 @@ class Sounimei(object):
         self.WAIT_TIME = 5
 
         # table_name = input("请输入表格名称")
-        table_name = 'qq_music'
+        self.TABLE_NAME = 'qq_music'
         # 预创建表存储结果
-        connectDB.my_create_table(table_name)
+        connectDB.my_create_table(self.TABLE_NAME)
+        # 下载的线程数
+        self.THREAD_NUM = 5
 
     # 进行解锁
     def unlock(self):
@@ -69,26 +71,34 @@ class Sounimei(object):
             reader = zxing.BarCodeReader()
             barcode = reader.decode(self.PATH + '/a.jpg')
             code = barcode.parsed
-            print('破解验证成功')
+            print('Successful crack verification')
             return code[-4:]
-        except Exception as e:
+        except:
             # 若没有java环境，使用手动模式
-            print(e)
-            code = input('请输入扫描后验证码\n')
+            # print(e)
+            print("Detected that you don't have Java")
+            code = input('Please enter the post scan verification code: ')
             return code
 
     # 下载文件
     def download(self, url, file_name):
         try:
-            if not os.path.exists(self.PATH + '/' + file_name):
-                r = requests.get(url)
-                with open(self.PATH + '/' + file_name, "wb") as f:
-                    f.write(r.content)
-                f.close()
-            else:
-                print(file_name + '已存在')
+            Link = url
+            file_path = self.PATH + '/' + file_name
+            thread_number = self.THREAD_NUM
+            dl = Download(Link, file_path, thread_number)
+            dl.download()
+            print('\r' + 'Download: 100%', end='', flush=True)
+            print(file_name + ': Download done')
         except:
-            print("下载失败")
+            print(file_name + ": Download error")
+
+    # 显示进度
+    def show_process(self, dl):
+        while dl.get_complete_rate() < 1:
+            complete_rate = int(dl.get_complete_rate()*100)
+            print('\r' + 'Download: ' + str(complete_rate) + '%', end='', flush=True)
+            time.sleep(0.01)
 
     # 音乐检索key关键词
     def search(self, key, count):
@@ -131,32 +141,35 @@ class Sounimei(object):
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
                         time.sleep(self.SLEEP_TIME)
-                    except :
-                        print("FLAC点击失败")
+                    except:
+                        print("FLAC button click failed")
                         self.driver.implicitly_wait(self.WAIT_TIME)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
                         time.sleep(self.SLEEP_TIME)
                 except:
-                    print("歌曲点击失败")
+                    print("Song click failed")
                     self.driver.implicitly_wait(self.WAIT_TIME)
                     close_btn = self.driver.find_element_by_css_selector('i.van-icon-cross')
                     close_btn.click()
                     time.sleep(self.SLEEP_TIME)
-            except Exception as e:
-                print(e)
+            except:
+                print('No songs detected')
 
     # 通过下滑加载歌曲
     def show_more(self, count):
         # 滑动到最底部
-        print('下拉页面中')
-        for i in range(1, count):
-            self.driver.execute_script('window.scrollBy(0, 1000)')
+        try:
+            for i in range(1, count):
+                self.driver.execute_script('window.scrollBy(0, 1000)')
+                time.sleep(self.SLEEP_TIME)
+                print('\rDropping down page: ' + str(i) + ' of ' + str(count), end='', flush=True)
+            # 滑动到最顶部
+            print('Start downloading')
+            self.driver.execute_script('window.scrollTo(0,0)')
             time.sleep(self.SLEEP_TIME)
-        # 滑动到最顶部
-        print('开始下载')
-        self.driver.execute_script('window.scrollTo(0,0)')
-        time.sleep(self.SLEEP_TIME)
+        except:
+            print('Page glide failed')
 
     # 运行函数
     def run(self):
