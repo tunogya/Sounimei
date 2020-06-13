@@ -103,6 +103,7 @@ class Sounimei(object):
                 result = {}
                 result['title'] = song.find_element_by_css_selector('span.item-title').text
                 result['album'] = song.find_element_by_css_selector('span.item-album').text
+                result['img'] = song.find_element_by_tag_name('img').get_attribute('src')
                 result['singer'] = song.find_element_by_css_selector('.van-cell__label span:nth-of-type(1)').text
                 song.click()
                 time.sleep(3)
@@ -115,8 +116,10 @@ class Sounimei(object):
                         result['url'] = self.driver.find_element_by_tag_name('a').get_attribute('href')
                         pattern = re.compile(r"(F.+(?=\?guid))")
                         result['file_name'] = re.findall(pattern, result['url'])[0]
+                        result['img_name'] = result['title'] + "-" + result['singer'] + '.jpg'
                         connectDB.my_insert_result(result)
-                        # self.download(result['url'], result['file_id'])   # 下载
+                        # self.download(result['url'], result['file_id'])   # 下载文件
+                        self.download(result['img'], result['file_name'])
                         # print(result)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
                         close_btn.click()
