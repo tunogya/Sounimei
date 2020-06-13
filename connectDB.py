@@ -50,10 +50,11 @@ def my_insert_result(result):
               title + "','" + singer + "','" + album + "','" + file_name + "','" + img + "','" + url + "');"
         cursor.execute(sql)
         db.commit()
-        print("《" + title + "》Write Successful")
-    except:
+        print("《" + title + "》 Write Successful")
+    except Exception as e:
         # 如果发生错误则回滚
-        print("《" + title + "》Write Fail")
+        print(e)
+        print("《" + title + "》 Write Fail")
         db.rollback()
         # db.close()
 

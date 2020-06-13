@@ -81,13 +81,14 @@ class Sounimei(object):
             return code
 
     # 下载文件
-    def download(self, url, file_name):
+    def download_file(self, url, file_name):
         try:
-            Link = url
+            link = url
             file_path = self.PATH + '/' + file_name
             thread_number = self.THREAD_NUM
-            dl = Download(Link, file_path, thread_number)
+            dl = Download(link, file_path, thread_number)
             dl.download()
+            self.show_process(dl)
             print('\r' + 'Download: 100%', end='', flush=True)
             print(file_name + ': Download done')
         except:
@@ -134,8 +135,8 @@ class Sounimei(object):
                         result['file_name'] = re.findall(pattern, result['url'])[0]
                         result['img_name'] = result['title'] + "-" + result['album'] + '.jpg'
                         connectDB.my_insert_result(result)
-                        self.download(result['url'], result['file_name'])   # 下载文件
-                        self.download(result['img'], result['img_name'])
+                        # self.download_file(result['url'], result['file_name'])   # 下载文件
+                        # self.download_file(result['img'], result['img_name'])
                         # print(result)
                         self.driver.implicitly_wait(self.WAIT_TIME)
                         close_btn = self.driver.find_element_by_css_selector('div:nth-of-type(4) i')
@@ -155,6 +156,10 @@ class Sounimei(object):
                     time.sleep(self.SLEEP_TIME)
             except:
                 print('No songs detected')
+                self.driver.implicitly_wait(self.WAIT_TIME)
+                close_btn = self.driver.find_element_by_css_selector('i.van-icon-cross')
+                close_btn.click()
+                time.sleep(self.SLEEP_TIME)
 
     # 通过下滑加载歌曲
     def show_more(self, count):
@@ -174,8 +179,8 @@ class Sounimei(object):
     # 运行函数
     def run(self):
         self.unlock()
-        key = input('Input your fantastic:')
-        count = input('How many times to scroll the window:')
+        key = input('Input your fantastic: ')
+        count = input('How many times to scroll the window: ')
         self.search(key, count)
 
     # 遍历查询所有的歌手

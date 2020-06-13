@@ -3,7 +3,7 @@ from urllib.request import *
 
 
 # Download类：包含download()和get_complete_rate()两种方法。
-class Download():
+class Download:
     def __int__(self, link, file_path, thread_num):
         self.link = link
         self.file_path = file_path
@@ -59,7 +59,7 @@ class ThreadDownload(threading.Thread):
 
     # run()方法主要负责每个线程读取网络数据并写入本地。
     def run(self):
-        req = Request(url = self.link, method='GET')
+        req = Request(url=self.link, method='GET')
         req.add_header('Accept', '*/*')
         req.add_header('Charset', 'UTF-8')
         req.add_header('Connection', 'Keep-Alive')
