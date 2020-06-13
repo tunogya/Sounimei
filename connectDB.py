@@ -19,7 +19,7 @@ cursor.execute("SET CHARACTER_SET_RESULTS = utf8")
 def my_create_table(table_name):
     try:
         sql = '''
-        CREATE TABLE `''' + table_name + ''''`  (
+        CREATE TABLE `''' + table_name + '''`  (
       `id` int(11) NOT NULL,
       `file_name` varchar(24) NOT NULL,
       `title` varchar(255) NOT NULL,
