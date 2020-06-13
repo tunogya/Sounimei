@@ -11,13 +11,21 @@ class Sounimei(object):
     def __init__(self):
         # 配置Chrome
         options = webdriver.ChromeOptions()
+        # 设置图片不加载
+        options.add_argument('blink-settings=imagesEnabled=false')
+        # 设置无头浏览器模式
+        options.add_argument('--headless')
+        options.add_argument('–-disable-gpu')
+        options.add_argument('–-no-sandbox')
+        options.add_argument('–-disable-dev-shm-usage')
+        options.add_argument('–-disable-extensions')
+        # profile.default_content_settings.popups：设置为 0 禁止弹出窗口
+        # download.default_directory: 设置下载路径
         self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
-        options.add_argument('--headless')
-        options.add_argument('–-no-sandbox')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--ignore-certificate-errors')
+
+        # self.driver = webdriver.Chrome('/usr/local/bin/chromedriver', chrome_options=options)
         self.driver = webdriver.Chrome(chrome_options=options)
         # 定义睡眠时间
         self.SLEEP_TIME = 1

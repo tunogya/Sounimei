@@ -3,7 +3,7 @@ import pymysql
 # 打开数据库连接（ip/用户名/密码/数据库名）
 host = input("Database host:")
 user = input("Database username:")
-password = input("Database password")
+password = input("Database password:")
 schema = "music"
 db = pymysql.connect(host, user, password, schema)
 
