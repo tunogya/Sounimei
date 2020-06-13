@@ -55,3 +55,16 @@ def my_insert_result(result):
         print(e)
         db.rollback()
         # db.close()
+
+
+def my_query_singer(begin, end):
+    try:
+        sql = "SELECT `name`  FROM `singer` ORDER BY `id` LIMIT " + str(begin) + ", " + str(end)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        singers = []
+        for singer in result:
+            singers.append(singer[0])
+        return singers
+    except Exception as e:
+        print(e)

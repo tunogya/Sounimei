@@ -25,6 +25,7 @@ class Sounimei(object):
 
         # table_name = input("请输入表格名称")
         table_name = 'qq_music'
+        # 预创建表存储结果
         connectDB.my_create_table(table_name)
 
     # 进行解锁
@@ -76,17 +77,15 @@ class Sounimei(object):
         else:
             print(file_name + '已存在')
 
-    # 音乐检索
-    def search(self):
+    # 音乐检索key关键词
+    def search(self, key, count):
         time.sleep(5)
         search_btn = self.driver.find_element_by_tag_name('button')
-        key = input('请输入搜索关键字\n')
         key_input = self.driver.find_element_by_class_name('van-field__control')
         key_input.clear()
         key_input.send_keys(key)
         search_btn.click()
         time.sleep(5)
-        count = input('请输入下滑次数\n')
         self.show_more(int(count))
 
         list = self.driver.find_elements_by_css_selector('.song-item-cell')
@@ -126,7 +125,7 @@ class Sounimei(object):
             except Exception as e:
                 print(e)
 
-    # 手动加载歌曲
+    # 通过下滑加载歌曲
     def show_more(self, count):
         # 滑动到最底部
         print('下拉页面中')
@@ -141,4 +140,18 @@ class Sounimei(object):
     # 运行函数
     def run(self):
         self.unlock()
-        self.search()
+        key = input('请输入搜索关键字\n')
+        count = input('请输入下滑次数\n')
+        self.search(key, count)
+
+    # 遍历查询所有的歌手
+    def collection(self):
+        begin = int(input('请输入开始编号\n')) - 1
+        end = int(input('请输入结束编号\n'))
+        list = connectDB.my_query_singer(begin, end)
+        print(list)
+        self.unlock()
+        for singer in enumerate(list):
+            self.search(singer, 100)
+
+
