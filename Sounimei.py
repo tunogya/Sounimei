@@ -15,6 +15,7 @@ class Sounimei(object):
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
         options.add_argument('--headless')
+        options.add_argument('–-no-sandbox')
         options.add_argument('--disable-gpu')
         options.add_argument('--ignore-certificate-errors')
         self.driver = webdriver.Chrome(chrome_options=options)
