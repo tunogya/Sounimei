@@ -39,14 +39,14 @@ def my_create_table(table_name):
 
 def my_insert_result(result):
     try:
-        title = result['title'].replace('\'', '"')
-        singer = result['singer'].replace('\'', '"')
-        album = result['album'].replace('\'', '"')
+        title = result['title']
+        singer = result['singer']
+        album = result['album']
         file_name = result['file_name']
         url = result['url']
         img = result['img']
-        sql = "INSERT INTO `qq_music` (`title`, `singer`, `album`, `file_name`,`img`, `url`) VALUE ('" + \
-              title + "','" + singer + "','" + album + "','" + file_name + "','" + img + "','" + url + "');"
+        sql = 'INSERT INTO `qq_music` (`title`, `singer`, `album`, `file_name`,`img`, `url`) VALUE ("' + \
+              title + '","' + singer + '","' + album + '","' + file_name + '","' + img + '","' + url + '");'
         print(sql)
         cursor.execute(sql)
         db.commit()
