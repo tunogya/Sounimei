@@ -47,7 +47,7 @@ def my_insert_result(result):
         img = result['img']
         sql = 'INSERT INTO `qq_music` (`title`, `singer`, `album`, `file_name`,`img`, `url`) VALUE ("' + \
               title + '","' + singer + '","' + album + '","' + file_name + '","' + img + '","' + url + '");'
-        print(sql)
+        # print(sql)
         cursor.execute(sql)
         db.commit()
         print("《" + title + "》Write Successful!")
