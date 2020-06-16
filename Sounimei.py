@@ -8,7 +8,7 @@ import connectDB
 
 
 class Sounimei(object):
-    def __init__(self):
+    def __init__(self, path, table_name, key):
         # 配置Chrome
         options = webdriver.ChromeOptions()
         # 设置图片不加载
@@ -21,7 +21,7 @@ class Sounimei(object):
         options.add_argument('–-disable-extensions')
         # profile.default_content_settings.popups：设置为 0 禁止弹出窗口
         # download.default_directory: 设置下载路径
-        self.PATH = input("File download path:")
+        self.PATH = path
         # self.PATH = '/Users/teihate/Downloads'  # 需要使用绝对路径
         prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': self.PATH}
         options.add_experimental_option('prefs', prefs)
@@ -33,8 +33,8 @@ class Sounimei(object):
         # 隐性等待时间
         self.WAIT_TIME = 5
 
-        # table_name = input("请输入表格名称")
-        table_name = 'qq_music'
+        self.key = key
+
         # 预创建表存储结果
         connectDB.my_create_table(table_name)
 
@@ -161,7 +161,7 @@ class Sounimei(object):
     # 运行函数
     def run(self):
         self.unlock()
-        key = input('Input your fantastic:')
+        key = self.key
         count = input('How many times to scroll the window:')
         self.search(key, count)
 
